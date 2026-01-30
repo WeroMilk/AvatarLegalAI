@@ -1,0 +1,40 @@
+"use client";
+
+import { useI18n } from "@/lib/i18n-context";
+import Link from "next/link";
+
+export function Footer() {
+  const { t } = useI18n();
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="relative z-10 py-8 px-4 border-t border-border bg-background">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm mb-4">
+        <Link
+          href="/terminos"
+          className="text-muted hover:text-blue-500 transition-colors cursor-pointer py-2 min-h-[44px] inline-flex items-center"
+        >
+          {t("footer_terms")}
+        </Link>
+        <Link
+          href="/privacidad"
+          className="text-muted hover:text-blue-500 transition-colors cursor-pointer py-2 min-h-[44px] inline-flex items-center"
+        >
+          {t("footer_privacy")}
+        </Link>
+        <Link
+          href="/aviso-legal"
+          className="text-muted hover:text-blue-500 transition-colors cursor-pointer py-2 min-h-[44px] inline-flex items-center"
+        >
+          {t("footer_disclaimer")}
+        </Link>
+      </div>
+      <p className="text-center text-muted text-sm">
+        {t("footer_location")}
+      </p>
+      <p className="text-center text-muted text-sm mt-1">
+        {t("footer_copyright", { year })}
+      </p>
+    </footer>
+  );
+}

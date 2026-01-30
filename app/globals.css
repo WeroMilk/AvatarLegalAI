@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Duración y curva para transición light/dark (ease-out suave, “pro”) */
+  --theme-transition-duration: 0.35s;
+  --theme-transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tema oscuro (por defecto y .dark) */
+:root,
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --muted: rgba(255, 255, 255, 0.7);
+  --border: rgba(59, 130, 246, 0.2);
+  --card: rgba(0, 0, 0, 0.4);
+}
+
+/* Tema claro */
+.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: rgba(15, 23, 42, 0.12);
+  --card: rgba(255, 255, 255, 0.92);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Transición suave al cambiar tema: fondo, texto, bordes */
+html {
+  transition:
+    background-color var(--theme-transition-duration) var(--theme-transition-ease),
+    color var(--theme-transition-duration) var(--theme-transition-ease);
+}
+
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color var(--theme-transition-duration) var(--theme-transition-ease),
+    color var(--theme-transition-duration) var(--theme-transition-ease),
+    border-color var(--theme-transition-duration) var(--theme-transition-ease),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-ease),
+    fill var(--theme-transition-duration) var(--theme-transition-ease);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: default;
+  transition:
+    background-color var(--theme-transition-duration) var(--theme-transition-ease),
+    color var(--theme-transition-duration) var(--theme-transition-ease);
+}
+
+a, button, [role="button"], .hover-button {
+  cursor: pointer;
+}
+
+/* Quitar flechitas de subir/bajar en inputs tipo number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent;
+    line-height: 1.2;
+    padding-bottom: 0.1em;
+    display: inline-block;
+  }
+  
+  .glass-effect {
+    background: var(--card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+  }
+  /* Light: marcos azules por defecto; al hover → color actual (border del tema) */
+  .light .glass-effect.hover-box {
+    margin: 2px;
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+  .light .glass-effect.hover-box:hover {
+    border-color: var(--border);
+  }
+  /* Dark: marcos blancos por defecto; al hover → azul */
+  .dark .glass-effect {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  .dark .glass-effect.hover-box {
+    margin: 2px;
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+  .dark .glass-effect.hover-box:hover {
+    border-color: rgba(59, 130, 246, 0.55);
+  }
+
+  /*
+   * Contraste de efectos en títulos, subtítulos, boxes y botones:
+   * - Texto negro o blanco → efecto azul.
+   * - Texto azul → efecto blanco.
+   */
+  .glow-border {
+    @apply border-2 border-transparent;
+  }
+
+  /* Boxes: light = borde azul → hover color actual; dark = borde blanco → hover azul */
+  .hover-box {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-box:hover {
+    @apply transform -translate-y-2;
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+  }
+  .light .hover-box:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--border);
+  }
+  .dark .hover-box:hover {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(59, 130, 246, 0.55);
+  }
+
+  /* Títulos: light mode → efecto blanco; dark mode → efecto azul */
+  .hover-title {
+    @apply transition-all duration-300 ease-out inline-block;
+  }
+  /* Light mode: efecto blanco */
+  .hover-title:hover {
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.55),
+      0 0 18px rgba(255, 255, 255, 0.4),
+      0 0 26px rgba(255, 255, 255, 0.25);
+  }
+  /* Dark mode: efecto azul (se mantiene) */
+  .dark .hover-title:hover {
+    text-shadow:
+      0 0 12px rgba(59, 130, 246, 0.6),
+      0 0 22px rgba(59, 130, 246, 0.45),
+      0 0 32px rgba(59, 130, 246, 0.3);
+  }
+  /* Títulos y subtítulos en azul (gradient-text, glow-white, text-blue-500) → efecto blanco */
+  .gradient-text.hover-title:hover,
+  .hover-title.glow-white:hover,
+  .hover-title.text-blue-500:hover {
+    text-shadow: none;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35))
+            drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+  }
+
+  /* Botones: negro/blanco (neutros) → efecto azul; azul (primary, white-glow) → efecto blanco */
+  .hover-button {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-button:hover {
+    @apply transform scale-105;
+    box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
+  }
+  .hover-button.btn-primary:hover {
+    box-shadow: 0 0 28px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.28);
+  }
+  .hover-button.btn-white-glow:hover {
+    box-shadow: 0 0 28px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.28);
+  }
+  .hover-button:active {
+    @apply transform scale-95;
+  }
+
+  /* Estabilidad de layout al cambiar idioma: reserva espacio para evitar que se muevan elementos */
+  .i18n-nav-link {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .i18n-stable-btn {
+    min-width: 10rem;
+    text-align: center;
+  }
+}
