@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-02-24.acacia",
-});
+/** Inicializa Stripe solo en runtime para no fallar el build cuando faltan env vars. */
+function getStripe(): Stripe | null {
+  const key = process.env.STRIPE_SECRET_KEY?.trim();
+  if (!key || key === "") return null;
+  return new Stripe(key, { apiVersion: "2025-02-24.acacia" });
+}
 
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripe();
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Stripe no configurado. Configura STRIPE_SECRET_KEY en Vercel." },
+        { status: 500 }
+      );
+    }
     const { documentId, price, saveToAccount } = await request.json();
     const origin = request.headers.get("origin") || "";
     const successBase = `${origin}/documentos/${documentId}/success?session_id={CHECKOUT_SESSION_ID}`;

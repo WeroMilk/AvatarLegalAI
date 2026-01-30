@@ -1,8 +1,13 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+/** Cliente OpenAI creado solo en runtime para no fallar el build cuando faltan env vars. */
+function getOpenAI(): OpenAI {
+  const key = process.env.OPENAI_API_KEY?.trim();
+  if (!key || key === "") {
+    throw new Error("OPENAI_API_KEY no configurada.");
+  }
+  return new OpenAI({ apiKey: key });
+}
 
 /** Nota de validez que debe aparecer al inicio de cada documento privado (Código Civil Federal y, en su caso, del Estado de Sonora). */
 const NOTA_VALIDEZ = `DOCUMENTO PRIVADO: El presente instrumento es un documento privado celebrado de conformidad con la legislación aplicable en los Estados Unidos Mexicanos (Código Civil Federal y, en su caso, Código Civil del Estado de Sonora). Surtirá efectos jurídicos entre las partes signantes una vez que sea firmado por ellas. Para su validez frente a terceros o su inscripción en el Registro Público, podrá requerirse su formalización ante Notario Público o fedatario competente. No constituye asesoría legal ni garantía de resultado.`;
@@ -93,6 +98,7 @@ Responde SOLO con el contenido del documento legal, sin comentarios adicionales.
   }
 
   try {
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
